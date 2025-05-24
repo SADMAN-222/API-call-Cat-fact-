@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Little Cat Fact Thingy</title>
+ 
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #c53f6c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .cat-card {
+            background-color: #318aca;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            border: 1px solid #ffccbc;
+        }
+
+        h1 {
+            color: #880e4f;
+            margin-bottom: 25px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        #factBox {
+            min-height: 100px;
+            background-color: #ffe0b2;
+            border: 2px dashed #ff8a65;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-style: italic;
+            color: #5d4037;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.6;
+            transition: all 0.3s ease-in-out;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            background-color: #f06292;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #e91e63;
+            transform: translateY(-3px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="cat-card">
+        <h1>🐱 A Fact for Your Day 🐱</h1>
+        <div id="factBox">
+            Just click the big pink button to get a random cat fact!
+        </div>
+        <button id="getFactBtn">Tell Me a Cat Fact!</button>
+    </div>
+
+    <script>
+        const factDisplay = document.getElementById('factBox');
+        const fetchButton = document.getElementById('getFactBtn');
+        const CAT_FACT_API_URL = 'https://catfact.ninja/fact';
+
+        async function fetchCatFact() {
+            factDisplay.textContent = 'Pestering the cats for a new fact... please wait...';
+            factDisplay.classList.remove('error-message');
+            factDisplay.style.backgroundColor = '#ffe0b2';
+            factDisplay.style.color = '#5d4037';
+
+            try {
+                const response = await fetch(CAT_FACT_API_URL);
+
+                if (!response.ok) {
+                    throw new Error(`Darn it! The API server didn't respond well: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                if (data && data.fact) {
+                    factDisplay.textContent = data.fact;
+                } else {
+                    factDisplay.textContent = 'Well, this is awkward... I got something back, but no actual cat fact. Try again?';
+                    factDisplay.classList.add('error-message');
+                    factDisplay.style.backgroundColor = '#ffebee';
+                }
+
+            } catch (error) {
+                console.error('Whoops! Something went wrong fetching the cat fact:', error);
+                factDisplay.textContent = `Couldn't get a cat fact right now. Maybe the internet is asleep? Error: ${error.message}`;
+                factDisplay.classList.add('error-message');
+                factDisplay.style.backgroundColor = '#ffebee';
+            }
+        }
+
+        fetchButton.addEventListener('click', fetchCatFact);
+        fetchCatFact();
+    </script>
+</body>
+</html>
+
+
